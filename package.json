@@ -4,7 +4,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:server": "nodemon --watch src -e js src/backend/api.js"
+    "node1": "nodemon --watch src -e js src/backend/networkNode.js 3001",
+    "node2": "nodemon --watch src -e js src/backend/networkNode.js 3002",
+    "node3": "nodemon --watch src -e js src/backend/networkNode.js 3003",
+    "node4": "nodemon --watch src -e js src/backend/networkNode.js 3004"
   },
   "author": "",
   "license": "ISC",

@@ -12,7 +12,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-const port = 3000;
+const port = process.argv[2];
 
 app.get("/blockchain", (req, res, next) => {
   res.send(duhCoin);
@@ -61,6 +61,7 @@ app.post("/transaction", (req, res, next) => {
   }
 });
 
-app.listen(3000, () => {
+app.listen(port, () => {
   console.log("SERVER started on PORT " + port);
+  console.log(`Local address: http://localhost:${port}/`);
 });
