@@ -15,10 +15,22 @@ app.get("/blockchain", (req, res, next) => {
   res.send(duhCoin);
 });
 
-app.get("/mine", (req, res, next) => {});
+app.get("/mine", (req, res, next) => {
+  
+});
 
 app.post("/transaction", (req, res, next) => {
-  
+  if (req.body.amount && req.body.sender && req.body.recipient) {
+    const blockIndex = duhCoin.createTransaction(
+      req.body.amount,
+      req.body.sender,
+      req.body.recipient
+    );
+
+    res.json({ note: `Transaction will be added in block ${blockIndex}.` });
+  } else {
+    res.send("Error getting transaction data!");
+  }
 });
 
 app.listen(3000, () => {
