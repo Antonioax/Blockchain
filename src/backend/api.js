@@ -16,7 +16,32 @@ app.get("/blockchain", (req, res, next) => {
 });
 
 app.get("/mine", (req, res, next) => {
-  
+  const lastBlock = duhCoin.getLastBlock();
+  const previousBlockHash = lastBlock.hash;
+  const currentBlockData = {
+    transactions: duhCoin.pendingTransactions,
+    index: lastBlock.index + 1,
+  };
+
+  const nonce = duhCoin.proofOfWork(previousBlockHash, currentBlockData);
+  const currentBlockHash = duhCoin.hashBlock(
+    previousBlockHash,
+    currentBlockData,
+    nonce
+  );
+
+  const newBlock = duhCoin.createBlock(
+    nonce,
+    previousBlockHash,
+    currentBlockHash
+  );
+
+  duhCoin.createTransaction(1, "00", )
+
+  res.json({
+    message: "New block mined!",
+    block: newBlock,
+  });
 });
 
 app.post("/transaction", (req, res, next) => {
