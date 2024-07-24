@@ -41,6 +41,19 @@ class Blockchain {
     return hash;
   }
 
+  proofOfWork(previouseBlockHash, currentBlockData) {
+    let nonce = 0;
+    let hash = this.hashBlock(previouseBlockHash, currentBlockData, nonce);
+
+    while (hash.substring(0, 4) !== "0000") {
+      nonce++;
+      hash = this.hashBlock(previouseBlockHash, currentBlockData, nonce);
+      console.log(hash);
+    }
+
+    return nonce;
+  }
+
   getLastBlock() {
     return this.chain[this.chain.length - 1];
   }
