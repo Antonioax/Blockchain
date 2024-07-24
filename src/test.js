@@ -1,5 +1,5 @@
 const Blockchain = require("./blockchain");
 
-const DuhCoin = new Blockchain();
+const duhCoin = new Blockchain();
 
-console.log(DuhCoin);
+console.log(duhCoin);
