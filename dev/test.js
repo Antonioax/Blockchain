@@ -2,16 +2,14 @@ const Blockchain = require("./blockchain");
 
 const DuhCoin = new Blockchain();
 
-DuhCoin.createBlock(123, "UIJHDUGDG", "OKWOIJWHUG");
-
-DuhCoin.createTransaction(100, "ALEXj8894zr4rz8", "JENNr487zr3849");
-
-DuhCoin.createBlock(222, "988zr44r98", "UIHZZ89uh87");
-
-DuhCoin.createTransaction(100, "ALEXj8894zr4rz8", "JENNr487zr3849");
-DuhCoin.createTransaction(200, "ALEXj8894zr4rz8", "JENNr487zr3849");
-DuhCoin.createTransaction(300, "ALEXj8894zr4rz8", "JENNr487zr3849");
-
-DuhCoin.createBlock(566, "988zr44r98", "UIHZZ89uh87");
-
-console.log(DuhCoin.chain[2]);
+console.log(
+  DuhCoin.hashBlock(
+    "88h8h788h78hh",
+    [
+      { amount: 10, sender: "83e38eu8u3e", recipient: "u9u9e8u893e" },
+      { amount: 20, sender: "83e38eu8u3e", recipient: "u9u9e8u893e" },
+      { amount: 30, sender: "83e38eu8u3e", recipient: "u9u9e8u893e" },
+    ],
+    123
+  )
+);
