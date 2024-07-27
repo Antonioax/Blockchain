@@ -49,17 +49,38 @@ app.get("/mine", (req, res, next) => {
 });
 
 app.post("/transaction", (req, res, next) => {
-  if (req.body.amount && req.body.sender && req.body.recipient) {
-    const blockIndex = duhCoin.createTransaction(
-      req.body.amount,
-      req.body.sender,
-      req.body.recipient
-    );
+  const blockIndex = duhCoin.addToPending(req.body.newTransaction);
+  res.json({
+    note: `Transaction will be added in block ${blockIndex}.`,
+  });
+});
 
-    res.json({ note: `Transaction will be added in block ${blockIndex}.` });
-  } else {
-    res.send("Error getting transaction data!");
-  }
+app.post("/transaction/broadcast", (req, res) => {
+  const newTransaction = duhCoin.createTransaction(
+    req.body.amount,
+    req.body.sender,
+    req.body.recipient
+  );
+  duhCoin.addToPending(newTransaction);
+
+  const transactionPromises = [];
+
+  duhCoin.networkNodes.forEach((nodeUrl) => {
+    const requestOptions = {
+      uri: nodeUrl + "/transaction",
+      method: "POST",
+      body: { newTransaction: newTransaction },
+      json: true,
+    };
+
+    transactionPromises.push(rp(requestOptions));
+  });
+
+  Promise.all(transactionPromises).then((data) => {
+    res.json({
+      note: "Transaction created and broadcasted successfully.",
+    });
+  });
 });
 
 app.post("/registerBroadcast", (req, res) => {
