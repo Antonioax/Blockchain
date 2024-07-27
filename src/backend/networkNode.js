@@ -110,7 +110,20 @@ app.post("/registerNode", (req, res) => {
   });
 });
 
-app.post("/registerBulk", (req, res) => {});
+app.post("/registerBulk", (req, res) => {
+  const allNodes = req.body.allNodes;
+  allNodes.forEach((node) => {
+    if (
+      node !== duhCoin.currentNodeUrl &&
+      duhCoin.networkNodes.indexOf(node) === -1
+    )
+      duhCoin.networkNodes.push(node);
+  });
+
+  res.json({
+    note: "Bulk registration successful.",
+  });
+});
 
 app.listen(port, () => {
   console.log("SERVER started on PORT " + port);
