@@ -61,6 +61,14 @@ app.post("/transaction", (req, res, next) => {
   }
 });
 
+app.post("/register-and-broadcast", (req, res) => {
+  const newNodeUrl = req.body.newNodeUrl;
+});
+
+app.post("/register-node", (req, res) => {});
+
+app.post("/register-nodes-bulk", (req, res) => {});
+
 app.listen(port, () => {
   console.log("SERVER started on PORT " + port);
   console.log(`Local address: http://localhost:${port}/`);
