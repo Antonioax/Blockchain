@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const Blockchain = require("../blockchain");
 const { v1: uuid } = require("uuid");
+const rp = require("request-promise");
 
 const nodeAddress = uuid().split("-").join("");
 
@@ -61,13 +62,45 @@ app.post("/transaction", (req, res, next) => {
   }
 });
 
-app.post("/register-and-broadcast", (req, res) => {
+app.post("/registerBroadcast", (req, res) => {
   const newNodeUrl = req.body.newNodeUrl;
+  if (duhCoin.networkNodes.indexOf(newNodeUrl) === -1)
+    duhCoin.networkNodes.push(newNodeUrl);
+
+  const registerPromises = [];
+
+  duhCoin.networkNodes.forEach((nodeUrl) => {
+    const requestOptions = {
+      uri: nodeUrl + "/registerNode",
+      method: "POST",
+      body: { newNodeUrl: newNodeUrl },
+      json: true,
+    };
+
+    registerPromises.push(rp(requestOptions));
+  });
+
+  Promise.all(registerPromises)
+    .then((data) => {
+      const requestOptions = {
+        uri: newNodeUrl + "/registerBulk",
+        method: "POST",
+        body: { allNodes: [...duhCoin.networkNodes, duhCoin.currentNodeUrl] },
+        json: true,
+      };
+
+      rp(requestOptions);
+    })
+    .then((data) => {
+      res.json({
+        note: "New node registered with network successfully.",
+      });
+    });
 });
 
-app.post("/register-node", (req, res) => {});
+app.post("/registerNode", (req, res) => {});
 
-app.post("/register-nodes-bulk", (req, res) => {});
+app.post("/registerBulk", (req, res) => {});
 
 app.listen(port, () => {
   console.log("SERVER started on PORT " + port);
