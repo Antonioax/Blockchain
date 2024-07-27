@@ -98,7 +98,17 @@ app.post("/registerBroadcast", (req, res) => {
     });
 });
 
-app.post("/registerNode", (req, res) => {});
+app.post("/registerNode", (req, res) => {
+  const newNodeUrl = req.body.newNodeUrl;
+  if (
+    duhCoin.networkNodes.indexOf(newNodeUrl) === -1 &&
+    newNodeUrl !== duhCoin.currentNodeUrl
+  )
+    duhCoin.networkNodes.push(newNodeUrl);
+  res.json({
+    note: "New node registered successfully with node.",
+  });
+});
 
 app.post("/registerBulk", (req, res) => {});
 
