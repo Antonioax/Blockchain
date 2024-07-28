@@ -82,17 +82,17 @@ class Blockchain {
       const blockHash = this.hashBlock(
         previousBlock.hash,
         {
-          transactions: currentBlock.transaction,
+          transactions: currentBlock.transactions,
           index: currentBlock.index,
         },
         currentBlock.nonce
       );
 
       if (currentBlock.previousBlockHash !== previousBlock.hash) return false;
-      if (blockHash.substring(0, 4) !== "0000") return false;
+      if (blockHash.substring(0, 4) !== "0000") return blockHash;
     }
 
-    return true;
+    return "All good chief!";
   }
 
   getLastBlock() {
