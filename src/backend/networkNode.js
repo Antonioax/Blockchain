@@ -44,7 +44,7 @@ app.get("/mine", (req, res, next) => {
 
   duhCoin.networkNodes.forEach((node) => {
     const requestOptions = {
-      uri: node + "/recieveBlock",
+      uri: node + "/getBlock",
       method: "POST",
       body: { newBlock: newBlock },
       json: true,
@@ -73,11 +73,33 @@ app.get("/mine", (req, res, next) => {
     .then({
       data: () => {
         res.json({
-          message: "New block mined!",
+          message: "New block mined and broadcasted successfully!",
           block: newBlock,
         });
       },
     });
+});
+
+app.post("/getBlock", (req, res) => {
+  const newBlock = req.body.newBlock;
+  const lastBlock = duhCoin.getLastBlock();
+
+  if (
+    lastBlock.hash === newBlock.previousBlockHash &&
+    lastBlock.index + 1 === newBlock.index
+  ) {
+    duhCoin.chain.push(newBlock);
+    duhCoin.pendingTransactions = [];
+    res.json({
+      note: "New block received and accepted.",
+      newBlock: newBlock,
+    });
+  } else {
+    res.json({
+      note: "New block rejected.",
+      newBlock: newBlock,
+    });
+  }
 });
 
 app.post("/transaction", (req, res, next) => {
