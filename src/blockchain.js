@@ -65,6 +65,36 @@ class Blockchain {
     return nonce;
   }
 
+  isValid(blockchain) {
+    const genesisBlock = blockchain[0];
+
+    if (
+      genesisBlock.nonce !== 0 ||
+      genesisBlock.previousBlockHash !== "0" ||
+      genesisBlock.hash !== "0" ||
+      genesisBlock.transactions.length !== 0
+    )
+      return false;
+
+    for (let i = 1; i < blockchain.length; ++i) {
+      const currentBlock = blockchain[i];
+      const previousBlock = blockchain[i - 1];
+      const blockHash = this.hashBlock(
+        previousBlock.hash,
+        {
+          transactions: currentBlock.transaction,
+          index: currentBlock.index,
+        },
+        currentBlock.nonce
+      );
+
+      if (currentBlock.previousBlockHash !== previousBlock.hash) return false;
+      if (blockHash.substring(0, 4) !== "0000") return false;
+    }
+
+    return true;
+  }
+
   getLastBlock() {
     return this.chain[this.chain.length - 1];
   }
