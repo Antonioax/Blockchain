@@ -34,18 +34,50 @@ app.get("/mine", (req, res, next) => {
     nonce
   );
 
-  duhCoin.createTransaction(1, "00", nodeAddress);
-
   const newBlock = duhCoin.createBlock(
     nonce,
     previousBlockHash,
     currentBlockHash
   );
 
-  res.json({
-    message: "New block mined!",
-    block: newBlock,
+  const blockPromises = [];
+
+  duhCoin.networkNodes.forEach((node) => {
+    const requestOptions = {
+      uri: node + "/recieveBlock",
+      method: "POST",
+      body: { newBlock: newBlock },
+      json: true,
+    };
+
+    blockPromises.push(rp(requestOptions));
   });
+
+  Promise.all(blockPromises)
+    .then({
+      data: () => {
+        const requestOptions = {
+          uri: duhCoin.currentNodeUrl + "/transaction/broadcast",
+          method: "POST",
+          body: {
+            amount: 1,
+            sender: "00",
+            recipient: nodeAddress,
+          },
+          json: true,
+        };
+
+        return rp(requestOptions);
+      },
+    })
+    .then({
+      data: () => {
+        res.json({
+          message: "New block mined!",
+          block: newBlock,
+        });
+      },
+    });
 });
 
 app.post("/transaction", (req, res, next) => {
