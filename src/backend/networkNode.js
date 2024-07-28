@@ -54,29 +54,25 @@ app.get("/mine", (req, res, next) => {
   });
 
   Promise.all(blockPromises)
-    .then({
-      data: () => {
-        const requestOptions = {
-          uri: duhCoin.currentNodeUrl + "/transaction/broadcast",
-          method: "POST",
-          body: {
-            amount: 1,
-            sender: "00",
-            recipient: nodeAddress,
-          },
-          json: true,
-        };
+    .then(() => {
+      const requestOptions = {
+        uri: duhCoin.currentNodeUrl + "/transaction/broadcast",
+        method: "POST",
+        body: {
+          amount: 1,
+          sender: "00",
+          recipient: nodeAddress,
+        },
+        json: true,
+      };
 
-        return rp(requestOptions);
-      },
+      return rp(requestOptions);
     })
-    .then({
-      data: () => {
-        res.json({
-          message: "New block mined and broadcasted successfully!",
-          block: newBlock,
-        });
-      },
+    .then(() => {
+      res.json({
+        message: "New block mined and broadcasted successfully!",
+        block: newBlock,
+      });
     });
 });
 
