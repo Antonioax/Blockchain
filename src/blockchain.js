@@ -89,10 +89,10 @@ class Blockchain {
       );
 
       if (currentBlock.previousBlockHash !== previousBlock.hash) return false;
-      if (blockHash.substring(0, 4) !== "0000") return blockHash;
+      if (blockHash.substring(0, 4) !== "0000") return false;
     }
 
-    return "All good chief!";
+    return true;
   }
 
   getLastBlock() {

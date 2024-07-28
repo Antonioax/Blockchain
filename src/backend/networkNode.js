@@ -19,6 +19,53 @@ app.get("/blockchain", (req, res, next) => {
   res.send(duhCoin);
 });
 
+app.get("/consensus", (req, res) => {
+  const blockPromises = [];
+
+  duhCoin.networkNodes.forEach((node) => {
+    const requestOptions = {
+      uri: node + "/blockchain",
+      method: "GET",
+      json: true,
+    };
+
+    blockPromises.push(rp(requestOptions));
+  });
+
+  Promise.all(blockPromises).then((blockchains) => {
+    const currentLength = duhCoin.chain.length;
+    let maxLength = currentLength;
+    let newChain = null;
+    let newPendingTransactions = null;
+
+    blockchains.forEach((blockchain) => {
+      if (
+        blockchain.chain.length > maxLength &&
+        duhCoin.isValid(blockchain.chain)
+      ) {
+        maxLength = blockchain.chain.length;
+        newChain = blockchain.chain;
+        newPendingTransactions = blockchain.pendingTransactions;
+      }
+    });
+
+    if (!newChain) {
+      res.json({
+        note: "Current chain has not been replaced.",
+        chain: duhCoin.chain,
+      });
+    } else {
+      duhCoin.chain = newChain;
+      duhCoin.pendingTransactions = newPendingTransactions;
+
+      res.json({
+        note: "Current chain has been replaced.",
+        chain: duhCoin.chain,
+      });
+    }
+  });
+});
+
 app.get("/mine", (req, res, next) => {
   const lastBlock = duhCoin.getLastBlock();
   const previousBlockHash = lastBlock.hash;
